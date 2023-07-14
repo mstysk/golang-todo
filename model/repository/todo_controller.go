@@ -41,3 +41,24 @@ func (tr *todoRepository) GetTodos() (todos []entity.TodoEntity, err error) {
     }
     return
 }
+
+func (tr *todoRepository) InsertTodo(todo entity.TodoEntity) (id int , err error) {
+    _, err = Db.Exec("INSERT INTO todo (titile, content) VALUE (?, ?)", todo.Title, todo.Content)
+    if err != nil {
+        log.Print(err)
+        return
+    }
+    err = Db.QueryRow("SELECT id FROM todo ORDER BY id DESC LIMIT 1").Scan(&id)
+    return 
+}
+
+
+func (tr *todoRepository) UpdateTodo(todo entity.TodoEntity) (err error) {
+    _, err = Db.Exec("UPDATE todo SET title = ?, content = ? WHERE id = ?", todo.Title, todo.Content, todo.Id)
+    return
+}
+
+func (tr *todoRepository) DeleteTodo(id int) (err error) {
+    _, err = Db.Exec("DELETE FROM todo WHERE id = ?", id)
+    return
+}
